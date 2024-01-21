@@ -1,11 +1,11 @@
 ---
-import projectImage from '@assets/images/project.png';
-import { Image } from '@astrojs/image/components';
-import Tags from '@components/ui/Tags.astro';
+import { Image } from 'astro:assets';
+import Tags from './Tags.astro';
+
 interface Props {
 	url?: string;
 	alt?: string;
-	img_url?: string;
+	img_url: string;
 	title?: string;
 	tags: string[];
 	children?: HTMLElement | HTMLElement[];
@@ -28,14 +28,13 @@ const {
 		<a href={url} target="_blank" aria-label="link to project">
 			<div class="relative flex items-end overflow-hidden rounded-xl">
 				<Image
-					src={img_url ? img_url : projectImage}
+					src={img_url}
 					alt={alt}
 					format="png"
-                    width={500}
-					aspectRatio={4 / 4}
+					width={320}
+					height={256}
 					loading="eager"
-                    fit='contain'
-                    background='white'
+                    class="w-full h-64 object-contain"
 				/>
 			</div>
 			<div class="mt-1 p-2">
