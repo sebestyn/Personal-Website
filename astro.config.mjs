@@ -6,7 +6,15 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [tailwind(), mdx(), icon()],
+	integrations: [
+		tailwind(),
+		mdx(),
+		icon({
+			include: {
+				'simple-icons': ['github', 'twitter', 'linkedin'],
+			},
+		}),
+	],
 	output: 'server',
 	adapter: cloudflare({
 		imageService: 'cloudflare',
