@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import heroImage from '../../public/zsolt_sebestyen.jpg';
 ---
 
 <section
@@ -17,9 +16,9 @@ import heroImage from '../../public/zsolt_sebestyen.jpg';
 	</div>
 	<div data-testid="hero-img" class="mb-10 flex w-1/2 items-center justify-center">
 		<Image
-			src={heroImage}
+			src="/zsolt_sebestyen.jpg"
 			alt="Zsolt Sebestyén - Web Developer"
-			class="max-w-full h-auto rounded-lg"
+			class="h-auto max-w-full rounded-3xl"
 			width={400}
 			height={400}
 			loading="eager"
