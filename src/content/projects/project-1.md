@@ -1,8 +1,9 @@
 ---
 inProgress: false
 title: IK-Média
-img_alt: project image alt text
-img_url: https://ikmedia.hu/pic/news_logo.png
+img_alt: IK-Média website screenshot
+img_url: /ikmedia.hu.png
 link: https://ikmedia.hu
-tags: ['Node.js', 'Javascript', 'EJS', 'Tailwind']
+tags: ['Node.js', 'Javascript', 'Tailwind CSS']
+isScreenshot: true
 ---

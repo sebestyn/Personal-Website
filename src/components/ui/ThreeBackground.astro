@@ -1,0 +1,239 @@
+---
+// Three.js 3D Background Component
+---
+
+<canvas id="three-background" class="fixed top-0 left-0 w-full h-full -z-10 opacity-80"></canvas>
+
+<script>
+	import * as THREE from 'three';
+
+	class ThreeBackground {
+		private scene: THREE.Scene;
+		private camera: THREE.PerspectiveCamera;
+		private renderer: THREE.WebGLRenderer;
+		private shapes: THREE.Mesh[] = [];
+		private scrollY = 0;
+
+		constructor() {
+			this.init();
+			this.createShapes();
+			this.setupEventListeners();
+			this.animate();
+		}
+
+		private init() {
+			// Scene
+			this.scene = new THREE.Scene();
+
+			// Camera - positioned better to see the shapes
+			this.camera = new THREE.PerspectiveCamera(
+				60, // Slightly wider field of view
+				window.innerWidth / window.innerHeight,
+				0.1,
+				1000
+			);
+			this.camera.position.set(0, 0, 12); // Moved back more to see all shapes
+
+			// Renderer
+			const canvas = document.getElementById('three-background') as HTMLCanvasElement;
+			this.renderer = new THREE.WebGLRenderer({
+				canvas,
+				alpha: true,
+				antialias: true,
+			});
+			this.renderer.setSize(window.innerWidth, window.innerHeight);
+			this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+			this.renderer.setClearColor(0x000000, 0); // Transparent background
+		}
+
+		private createShapes() {
+			// Add lighting for 3D effect
+			const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+			this.scene.add(ambientLight);
+
+			const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+			directionalLight.position.set(5, 5, 5);
+			this.scene.add(directionalLight);
+
+			const geometries = [
+				new THREE.IcosahedronGeometry(1),
+				new THREE.DodecahedronGeometry(1),
+				new THREE.TetrahedronGeometry(1.2),
+				new THREE.OctahedronGeometry(1),
+				new THREE.BoxGeometry(1.5, 1.5, 1.5),
+			];
+
+			const colors = [
+				'#E06330', // Orange (your theme color)
+				'#D05A2D', // Orange dark
+				'#4b5563', // Gray-600
+				'#374151', // Gray-700
+				'#1f2937', // Gray-800
+			];
+
+			// Create a grid-like distribution to avoid clustering
+			const gridSize = 4;
+			const spacing = 8;
+			let shapeIndex = 0;
+
+			for (let x = 0; x < gridSize; x++) {
+				for (let y = 0; y < gridSize; y++) {
+					if (shapeIndex >= 12) break; // Limit to 12 shapes
+
+					const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+					const isWireframe = Math.random() > 0.6;
+					
+					let material;
+					if (isWireframe) {
+						material = new THREE.MeshBasicMaterial({
+							color: colors[Math.floor(Math.random() * colors.length)],
+							wireframe: true,
+							transparent: true,
+							opacity: 0.8,
+						});
+					} else {
+						// Use MeshPhongMaterial for proper 3D lighting
+						material = new THREE.MeshPhongMaterial({
+							color: colors[Math.floor(Math.random() * colors.length)],
+							shininess: 100,
+							transparent: true,
+							opacity: 0.7,
+						});
+					}
+
+					const mesh = new THREE.Mesh(geometry, material);
+
+					// Grid-based positioning with some randomness
+					const baseX = (x - gridSize/2) * spacing + (Math.random() - 0.5) * 3;
+					const baseY = (y - gridSize/2) * spacing + (Math.random() - 0.5) * 3;
+					const baseZ = (Math.random() - 0.5) * 15;
+
+					mesh.position.set(baseX, baseY, baseZ);
+
+					// Store initial position for animation
+					mesh.userData.initialPosition = mesh.position.clone();
+
+					// Random rotation
+					mesh.rotation.x = Math.random() * Math.PI;
+					mesh.rotation.y = Math.random() * Math.PI;
+					mesh.rotation.z = Math.random() * Math.PI;
+
+					// Better scale range - make them more visible
+					const scale = Math.random() * 0.4 + 0.8; // 0.8 to 1.2
+					mesh.scale.setScalar(scale);
+					mesh.userData.baseScale = scale;
+
+					// Store rotation speeds for variety
+					mesh.userData.rotationSpeed = {
+						x: (Math.random() - 0.5) * 0.02,
+						y: (Math.random() - 0.5) * 0.02,
+						z: (Math.random() - 0.5) * 0.02
+					};
+
+					this.shapes.push(mesh);
+					this.scene.add(mesh);
+					shapeIndex++;
+				}
+			}
+		}
+
+		private setupEventListeners() {
+			// Handle scroll
+			window.addEventListener('scroll', () => {
+				this.scrollY = window.scrollY;
+			});
+
+			// Handle resize
+			window.addEventListener('resize', () => {
+				this.camera.aspect = window.innerWidth / window.innerHeight;
+				this.camera.updateProjectionMatrix();
+				this.renderer.setSize(window.innerWidth, window.innerHeight);
+			});
+
+			// Handle theme changes
+			const observer = new MutationObserver((mutations) => {
+				mutations.forEach((mutation) => {
+					if (
+						mutation.type === 'attributes' &&
+						mutation.attributeName === 'class' &&
+						mutation.target === document.documentElement
+					) {
+						this.updateTheme();
+					}
+				});
+			});
+
+			observer.observe(document.documentElement, {
+				attributes: true,
+				attributeFilter: ['class'],
+			});
+		}
+
+		private updateTheme() {
+			const isDark = document.documentElement.classList.contains('dark');
+			const canvas = document.getElementById('three-background') as HTMLCanvasElement;
+			
+			if (isDark) {
+				canvas.style.opacity = '0.4';
+			} else {
+				canvas.style.opacity = '0.8';
+			}
+		}
+
+		private animate = () => {
+			requestAnimationFrame(this.animate);
+
+			// Rotate shapes based on time and scroll
+			const time = Date.now() * 0.001;
+			const scrollOffset = this.scrollY * 0.01; // Increased scroll sensitivity
+
+			this.shapes.forEach((shape, index) => {
+				// Base rotation using stored speeds
+				shape.rotation.x += shape.userData.rotationSpeed.x;
+				shape.rotation.y += shape.userData.rotationSpeed.y;
+				shape.rotation.z += shape.userData.rotationSpeed.z;
+
+				// Much more responsive scroll-based rotation
+				const scrollRotationMultiplier = 0.005 + index * 0.001;
+				shape.rotation.x += scrollOffset * scrollRotationMultiplier;
+				shape.rotation.y += scrollOffset * scrollRotationMultiplier * 0.7;
+				shape.rotation.z += scrollOffset * scrollRotationMultiplier * 1.3;
+
+				// Floating animation
+				const floatAmplitude = 0.5;
+				const floatFrequency = 0.5 + index * 0.1;
+				shape.position.y = shape.userData.initialPosition.y + Math.sin(time * floatFrequency + index) * floatAmplitude;
+
+				// Pulse effect
+				const pulse = 1 + Math.sin(time * 2 + index) * 0.08;
+				shape.scale.setScalar(shape.userData.baseScale * pulse);
+
+				// Drift movement based on scroll
+				const driftMultiplier = 0.002;
+				shape.position.x = shape.userData.initialPosition.x + Math.sin(scrollOffset * 0.1 + index) * driftMultiplier * 100;
+				shape.position.z = shape.userData.initialPosition.z + Math.cos(scrollOffset * 0.08 + index) * driftMultiplier * 50;
+			});
+
+			// Move camera based on scroll for parallax effect
+			this.camera.position.y = -this.scrollY * 0.003;
+			this.camera.rotation.z = this.scrollY * 0.0002;
+
+			this.renderer.render(this.scene, this.camera);
+		};
+	}
+
+	// Initialize when DOM is loaded
+	document.addEventListener('DOMContentLoaded', () => {
+		// Store base scales for shapes
+		setTimeout(() => {
+			new ThreeBackground();
+		}, 100);
+	});
+</script>
+
+<style>
+	#three-background {
+		pointer-events: none;
+		background: transparent;
+	}
+</style>

@@ -5,7 +5,7 @@ import Tags from './Tags.astro';
 interface Props {
 	url?: string;
 	alt?: string;
-	img_url: string;
+	img_url?: string;
 	title?: string;
 	tags: string[];
 	children?: HTMLElement | HTMLElement[];
@@ -13,34 +13,38 @@ interface Props {
 
 const {
 	url = '#',
-	img_url = undefined,
+	img_url,
 	alt = 'Project image',
 	title = 'Project title',
 	tags = ['Tags'],
 } = Astro.props;
 ---
 
-<section class="w-full">
+<section class="w-full h-full">
 	<article
 		data-testId="card"
-		class="rounded-xl bg-white dark:bg-gray-900 p-3 duration-100 hover:scale-105 hover:transform"
+		class="rounded-xl bg-white shadow-lg transition-shadow dark:bg-gray-900 p-3 duration-100 hover:scale-105 hover:transform h-full flex flex-col"
 	>
-		<a href={url} target="_blank" aria-label="link to project">
-			<div class="relative flex items-end overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-800">
-				<Image
-					src={img_url}
-					alt={alt}
-					format="png"
-					width={320}
-					height={256}
-					loading="eager"
-					class="h-64 w-full object-contain"
-				/>
+		<a href={url} target="_blank" aria-label="link to project" class="flex flex-col h-full">
+			<div class="relative flex items-end overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-800 flex-shrink-0">
+				{img_url && (
+					<Image
+						src={img_url}
+						alt={alt}
+						format="png"
+						width={320}
+						height={256}
+						loading="eager"
+						class="h-64 w-full object-cover"
+					/>
+				)}
 			</div>
-			<div class="mt-1 p-2">
-				<h3 class="text-xl text-orange lg:text-2xl">{title}</h3>
-				<Tags tags={tags} />
+			<div class="mt-1 p-2 flex-grow flex flex-col justify-between">
+				<h3 class="text-xl text-orange lg:text-2xl mb-2">{title}</h3>
 			</div>
 		</a>
+		<div class="px-2 pb-2">
+			<Tags tags={tags} />
+		</div>
 	</article>
 </section>

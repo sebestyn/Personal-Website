@@ -4,15 +4,61 @@ export interface Props {
 }
 
 const { tags } = Astro.props;
+
+// Function to get URL for each technology
+const getTechUrl = (tag: string) => {
+	const techUrls: Record<string, string> = {
+		'HTML': 'https://developer.mozilla.org/en-US/docs/Web/HTML',
+		'CSS': 'https://developer.mozilla.org/en-US/docs/Web/CSS',
+		'JavaScript': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript',
+		'TypeScript': 'https://www.typescriptlang.org/',
+		'Angular': 'https://angular.io/',
+		'React': 'https://react.dev/',
+		'Node.js': 'https://nodejs.org/',
+		'Deno': 'https://deno.com/',
+		'Astro': 'https://astro.build/',
+		'Tailwind CSS': 'https://tailwindcss.com/',
+		'MongoDB': 'https://www.mongodb.com/',
+		'SQL': 'https://en.wikipedia.org/wiki/SQL',
+		'Docker': 'https://www.docker.com/',
+		'Git': 'https://git-scm.com/',
+		'GitHub': 'https://github.com/',
+		'GitLab': 'https://gitlab.com/',
+		'Kotlin': 'https://kotlinlang.org/',
+		'Android': 'https://developer.android.com/',
+		'Jetpack Compose': 'https://developer.android.com/jetpack/compose',
+		'.NET': 'https://dotnet.microsoft.com/',
+		'REST API': 'https://restfulapi.net/',
+		'API': 'https://restfulapi.net/',
+		'WordPress': 'https://wordpress.org/',
+		'PHP': 'https://www.php.net/',
+	};
+	
+	// Try exact match first, then partial match
+	const exactMatch = techUrls[tag];
+	if (exactMatch) return exactMatch;
+	
+	// Fallback to search if no exact match found
+	const searchTerm = tag.toLowerCase().replace(/[^a-z0-9]/g, '+');
+	return `https://developer.mozilla.org/en-US/search?q=${searchTerm}`;
+};
 ---
 
 {
 	tags && (
-		<div class="mt-3 flex flex-wrap gap-2">
+		<div class="mt-3 flex flex-wrap gap-2 items-start">
 			{tags.map((tag) => (
-				<span class="inline-flex items-center rounded-full bg-orange/10 px-3 py-1 text-xs font-medium text-orange dark:bg-orange/20 dark:text-orange transition-colors hover:bg-orange/20 dark:hover:bg-orange/30">
-					#{tag}
-				</span>
+				<a 
+					href={getTechUrl(tag)}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="group inline-flex items-center rounded-full bg-orange/10 px-3 py-1 text-xs font-medium text-orange dark:bg-orange/20 dark:text-orange transition-all duration-200 hover:bg-orange/20 dark:hover:bg-orange/30 hover:scale-105 hover:shadow-sm whitespace-nowrap"
+				>
+					<span>#{tag}</span>
+					<svg class="w-2.5 h-2.5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+					</svg>
+				</a>
 			))}
 		</div>
 	)

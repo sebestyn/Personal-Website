@@ -1,6 +1,8 @@
 ---
 import Footer from '@components/Footer.astro';
 import Navbar from '@components/Navbar.astro';
+import ThreeBackground from '@components/ui/ThreeBackground.astro';
+import ContentOverlay from '@components/ui/ContentOverlay.astro';
 import { SEO } from 'astro-seo';
 
 export interface LayoutProps {
@@ -26,11 +28,15 @@ const { title = 'Zsolt Sebestyén | Web developer' } = Astro.props as LayoutProp
 		<title>{title}</title>
 	</head>
 	<body
-		class="mx-auto max-w-screen-xl bg-white px-5 font-sans text-white dark:bg-black xs:text-[16px] md:text-[18px]"
+		class="mx-auto max-w-screen-xl bg-white px-5 font-sans text-white dark:bg-black xs:text-[16px] md:text-[18px] relative"
 	>
-		<Navbar />
-		<slot />
-		<Footer />
+		<!-- <ThreeBackground />
+		<ContentOverlay /> -->
+		<div class="relative z-10">
+			<Navbar />
+			<slot />
+			<Footer />
+		</div>
 
 		<style is:global>
 			img {

@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+import Tags from './Tags.astro';
+
+interface Props {
+	url?: string;
+	alt?: string;
+	img_url?: string;
+	title?: string;
+	tags: string[];
+	children?: HTMLElement | HTMLElement[];
+}
+
+const {
+	url = '#',
+	img_url,
+	alt = 'Project image',
+	title = 'Project title',
+	tags = ['Tags'],
+} = Astro.props;
+---
+
+<section class="h-full w-full">
+	<article
+		data-testId="screenshot-card"
+		class="flex h-full flex-col rounded-xl bg-white p-3 shadow-lg transition-shadow duration-100 hover:scale-105 hover:transform dark:bg-gray-900"
+	>
+		<a href={url} target="_blank" aria-label="link to project" class="flex h-full flex-col">
+			<div
+				class="group relative h-64 flex-shrink-0 overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-800"
+			>
+				{
+					img_url && (
+						<div class="relative h-full w-full">
+							<Image
+								src={img_url}
+								alt={alt}
+								format="png"
+								width={320}
+								height={1200}
+								loading="eager"
+								class="absolute left-0 top-0 h-auto min-h-[300%] w-full object-cover transition-transform duration-[4000ms] ease-linear group-hover:-translate-y-[70%]"
+							/>
+						</div>
+					)
+				}
+				<!-- Overlay gradient to show there's more content -->
+				<div
+					class="to-transparent pointer-events-none absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/40 transition-opacity duration-500 group-hover:opacity-0"
+				>
+				</div>
+				<!-- Scroll indicator -->
+				<div
+					class="absolute bottom-2 right-2 flex items-center rounded-full bg-black/70 px-2 py-1 text-xs text-white opacity-90 transition-opacity duration-300 group-hover:opacity-0"
+				>
+					<svg class="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+					</svg>
+					Hover
+				</div>
+			</div>
+			<div class="mt-1 flex flex-grow flex-col justify-between p-2">
+				<h3 class="mb-2 text-xl text-orange lg:text-2xl">{title}</h3>
+			</div>
+		</a>
+		<div class="px-2 pb-2">
+			<Tags tags={tags} />
+		</div>
+	</article>
+</section>

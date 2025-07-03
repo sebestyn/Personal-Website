@@ -8,6 +8,7 @@ const projectsCollection = defineCollection({
 		link: z.string(),
 		img_alt: z.string().optional(),
 		img_url: z.string().optional(),
+		isScreenshot: z.boolean().default(false),
 	}),
 });
 

@@ -1,26 +1,130 @@
 ---
-import Button from '@components/ui/Button.astro';
 import Social from '@components/ui/Social.astro';
 ---
 
 <section
 	data-testid="contact"
 	id="contact"
-	class="flex flex-col flex-wrap items-center justify-center gap-8 text-black dark:text-white lg:mb-0"
+	class="flex min-h-screen flex-col items-center justify-center px-4 py-16 lg:px-8"
 >
-	<h2 class="font-monospace text-2xl text-orange lg:text-4xl">Contact</h2>
-	<span class="mb-8 h-1 w-10 bg-orange"></span>
-	<Button
-		size={'lg'}
-		style={'primary'}
-		name="Contact"
-		href="mailto:sebestyen.info@gmail.com"
-		target="_blank"
-	>
-		Say hello!
-	</Button>
-	<hr class="w-1/2" />
-	<div class="flex flex-col gap-8 lg:flex lg:flex-row lg:gap-20">
-		<Social />
+	<div class="mx-auto max-w-4xl text-center">
+		<!-- Header -->
+		<div class="mb-16">
+			<h2 class="mb-4 font-monospace text-3xl text-orange lg:text-5xl">Contact</h2>
+			<span class="mx-auto block h-1 w-16 bg-orange"></span>
+		</div>
+
+		<!-- Contact Cards Grid -->
+		<div class="mb-12 grid gap-8 md:grid-cols-2">
+			<!-- Email Card -->
+			<div
+				class="rounded-xl bg-white p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl dark:bg-gray-900"
+			>
+				<div class="flex flex-col items-center">
+					<div
+						class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange/10"
+					>
+						<svg
+							class="h-6 w-6 text-orange"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+							></path>
+						</svg>
+					</div>
+					<h3 class="mb-3 text-lg font-semibold text-gray-900 dark:text-white">Email</h3>
+					<a
+						id="email-link"
+						href="#"
+						class="group inline-flex items-center rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:scale-105 hover:bg-orange hover:text-white dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-orange"
+					>
+						<span id="email-text">Click to Reveal</span>
+					</a>
+				</div>
+			</div>
+
+			<!-- Phone Card -->
+			<div
+				class="rounded-xl bg-white p-6 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl dark:bg-gray-900"
+			>
+				<div class="flex flex-col items-center">
+					<div
+						class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-orange/10"
+					>
+						<svg
+							class="h-6 w-6 text-orange"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+							></path>
+						</svg>
+					</div>
+					<h3 class="mb-3 text-lg font-semibold text-gray-900 dark:text-white">Phone</h3>
+					<a
+						id="phone-link"
+						href="#"
+						class="group inline-flex items-center rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-all duration-200 hover:scale-105 hover:bg-orange hover:text-white dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-orange"
+					>
+						<span id="phone-text">Click to Reveal</span>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		<!-- Social Media Section -->
+		<div class="mb-8 rounded-xl bg-white p-6 shadow-lg dark:bg-gray-900">
+			<h3 class="mb-4 text-center text-lg font-semibold text-gray-900 dark:text-white">
+				Social
+			</h3>
+			<div class="flex items-center justify-center gap-8">
+				<Social />
+			</div>
+		</div>
 	</div>
 </section>
+
+<script>
+	const contactSection = document.querySelector('#contact') as Element;
+
+	const observer = new IntersectionObserver(
+		(entries, observer) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					const emailLink = document.getElementById('email-link');
+					const emailText = document.getElementById('email-text');
+					const phoneLink = document.getElementById('phone-link');
+					const phoneText = document.getElementById('phone-text');
+
+					if (emailLink && emailText) {
+						emailLink.setAttribute('href', 'mailto:sebestyen.info@gmail.com');
+						emailText.textContent = 'sebestyen.info@gmail.com';
+					}
+
+					if (phoneLink && phoneText) {
+						phoneLink.setAttribute('href', 'tel:+36705258596');
+						phoneText.textContent = '+36 70 525 8596';
+					}
+
+					observer.unobserve(contactSection);
+				}
+			});
+		},
+		{ threshold: 0.1 }
+	);
+
+	if (contactSection) {
+		observer.observe(contactSection);
+	}
+</script>
